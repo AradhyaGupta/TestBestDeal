@@ -1,0 +1,563 @@
+<html>
+	<head>
+		<title>Geolocation</title>
+		<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="css/GoogleMap.css">
+		<script  src="js/eBay.js"></script>
+	</head>
+	<body style = "background-color:#f2f2f2;">
+		<nav class="navbar navbar-default">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a href="#" class="navbar-brand" style = "color:cornsilk;">BestDeal.com</a>
+				</div>
+				<!-- Menu Items -->
+				<div>
+					<ul class="nav navbar-nav">
+						<li class="active"><a href="testGoogleMap.html">Home</a></li>
+						<li><a href="about.html" style ="color:khaki;">About</a></li>
+						<li><a href="contact.html" style ="color:khaki;">Contact</a></li>
+						<li  onclick = "btnSignOut()"><a href="#" style ="color:khaki;">Log Out</a></li>
+						
+						<!--<li class="dropdown">
+							<a href="#" class="dropdown-toggle" style ="color:khaki;" data-toggle="dropdown">My Profile <span class="caret"></span></a>
+							<ul class="dropdown-menu">
+								<li><a href="#">Profile</a></li>
+								<li><a href="#">History</a></li>
+								<li onclick = "btnSignOut()">Log Out</li>
+							</ul>
+						</li>-->
+					
+					</ul>
+				</div>
+
+			</div>
+		</nav>
+		<div id="floating-panel" class = "input-group col-lg-3">
+			<input type = "text" class= "form-control" placeholder = "Enter Search Text" id ="inputSearchText" >
+			<span class = "input-group-btn">
+				<button id="drop" class = "btn btn-primary" onclick="searchTexteBay()">Search</button><button onclick="myFunction()">SHOW</button>
+				<!-- removing drop() from the above tag and putting search function for testing -->
+			</span>
+		</div>
+		<!--<div id="results"></div>-->
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<div>
+			<table id = "resultTable" class = "table table-striped" style = "width:55%;float : left">
+			  <!--<tr>
+				<th>Image</th>
+				<th>Item Name</th>
+				<th>Price</th>
+			  </tr>-->
+			</table>
+		</div>
+		<div id="map"></div>
+		<script>
+			
+			var map, infoWindow;
+			function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: -34.397, lng: 150.644},
+          zoom: 9
+		
+        });
+		}
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+            var pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+			var marker1 = new google.maps.Marker({
+				position: pos,
+				map: map
+			});
+			
+            map.setCenter(pos);
+          }, function() {
+            handleLocationError(true, infoWindow, map.getCenter());
+          });
+        } else {
+          // Browser doesn't support Geolocation
+          handleLocationError(false, infoWindow, map.getCenter());
+        }
+			
+			var markers = [];
+			function drop() {
+				var neighborhoods = [
+					{lat: generateLatLong(34), lng: -118.245},
+					{lat: generateLatLong(34), lng: -118.246},
+					{lat: generateLatLong(34), lng: -118.276},
+					{lat: generateLatLong(34), lng: -118.54},
+					{lat: generateLatLong(34), lng: -118.32},
+					{lat: generateLatLong(34), lng: -118.87}
+				];
+				//var neighborhoods = createNeighborhood(itemLocation)
+				
+				//console.log("neigh")
+				//console.log(neighborhoods)
+				clearMarkers();
+				for (var i = 0; i < neighborhoods.length; i++) {
+					addMarkerWithTimeout(neighborhoods[i], i * 200);
+				}
+			}
+			 function addMarkerWithTimeout(position, timeout) {
+				window.setTimeout(function() {
+					markers.push(new google.maps.Marker({
+					position: position,
+					map: map,
+					animation: google.maps.Animation.DROP
+					}));
+				}, timeout);
+			}
+			function clearMarkers() {
+        for (var i = 0; i < markers.length; i++) {
+          markers[i].setMap(null);
+        }
+        markers = [];
+      }
+
+      function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+        infoWindow.setPosition(pos);
+        infoWindow.setContent(browserHasGeolocation ?
+                              'Error: The Geolocation service failed.' :
+                              'Error: Your browser doesn\'t support geolocation.');
+        infoWindow.open(map);
+      }
+	  
+		function generateLatLong(a) {
+			return(Number(a)+Number(Math.round(Math.random()+'e'+4)+'e-'+4))
+		}
+	  
+    </script>
+	<!--
+	<script>
+		function createNeighborhood(itemLocation){
+			var neighborhoods12
+			console.log(itemLocation)
+			var m
+			for (m = 0; m < 6; m++) {
+				console.log(itemLocation[0])
+				geocoder = new google.maps.Geocoder();
+				geocoder.geocode( { 'address': itemLocation[0]}, function(results, status) {
+					if (status == google.maps.GeocoderStatus.OK) {
+						neighborhoods.push({lat:results[0].geometry.location.lat(), lng:results[0].geometry.location.lng()})
+					}
+					else{
+						neighborhoods.push({lat: 34.0722, lng: -118.2737})
+					}
+				}
+				)
+			}
+			return neighborhoods12
+		}
+	</script>
+	-->
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBEevJ9sXUIFNmqNzDenIMgvIHxGm2jK2E&callback=initMap">
+    </script>
+	
+	<script>
+		// Parse the response and build an HTML table to display search results
+		function _cb_findItemsByKeywords(root) {
+		var items = root.findItemsByKeywordsResponse[0].searchResult[0].item || [];
+		var html = [];
+		html.push('<table width="100%" border="0" cellspacing="0" cellpadding="3"><tbody>');
+			for (var i = 0; i < items.length; ++i) {
+    var item     = items[i];
+    var title    = item.title;
+    var pic      = item.galleryURL;
+    var viewitem = item.viewItemURL;
+    if (null != title && null != viewitem) {
+      html.push('<tr><td>' + '<img src="' + pic + '" border="0">' + '</td>' + 
+      '<td><a href="' + viewitem + '" target="_blank">' + title + '</a></td></tr>');
+    }
+  }
+  html.push('</tbody></table>');
+  document.getElementById("results").innerHTML = html.join("");
+}  // End _cb_findItemsByKeywords() function
+
+// Create a JavaScript array of the item filters you want to use in your request
+var filterarray = [
+  {"name":"MaxPrice", 
+   "value":"25", 
+   "paramName":"Currency", 
+   "paramValue":"USD"},
+  {"name":"FreeShippingOnly", 
+   "value":"true", 
+   "paramName":"", 
+   "paramValue":""},
+  {"name":"ListingType", 
+   "value":["AuctionWithBIN", "FixedPrice", "StoreInventory"], 
+   "paramName":"", 
+   "paramValue":""},
+  ];
+
+
+// Define global variable for the URL filter
+var urlfilter = "";
+
+// Generates an indexed URL snippet from the array of item filters
+function  buildURLArray() {
+  // Iterate through each filter in the array
+  for(var i=0; i<filterarray.length; i++) {
+    //Index each item filter in filterarray
+    var itemfilter = filterarray[i];
+    // Iterate through each parameter in each item filter
+    for(var index in itemfilter) {
+      // Check to see if the paramter has a value (some don't)
+      if (itemfilter[index] !== "") {
+        if (itemfilter[index] instanceof Array) {
+          for(var r=0; r<itemfilter[index].length; r++) {
+          var value = itemfilter[index][r];
+          urlfilter += "&itemFilter\(" + i + "\)." + index + "\(" + r + "\)=" + value ;
+          }
+        } 
+        else {
+          urlfilter += "&itemFilter\(" + i + "\)." + index + "=" + itemfilter[index];
+        }
+      }
+    }
+  }
+}  // End buildURLArray() function
+
+// Execute the function to build the URL filter
+buildURLArray(filterarray);
+	var itemName = [];
+	var imageURL = [];
+	var itemURL = [];
+	var itemLocation = [];
+	var postalCode = [];
+	var price = [];
+function searchTexteBay(){
+	var table = document.getElementById("resultTable");
+				
+	table.innerHTML = "";
+	itemName = [];
+	imageURL = [];
+	itemURL = [];
+	itemLocation = [];
+	postalCode = [];
+	price = [];
+
+	var searchText = document.getElementById("inputSearchText").value;	
+	var searchTextModified = "&keywords="+searchText.split(' ').join('%20');
+	//alert(searchTextModified)
+	var url = "http://svcs.ebay.com/services/search/FindingService/v1";
+	url += "?OPERATION-NAME=findItemsByKeywords";
+    url += "&SERVICE-VERSION=1.0.0";
+    url += "&SECURITY-APPNAME=AshwinVe-BestDeal-PRD-e5d7a0307-0e4f4543";
+    url += "&GLOBAL-ID=EBAY-US";
+    url += "&RESPONSE-DATA-FORMAT=JSON";
+    url += "&callback=_cb_findItemsByKeywords";
+    url += "&REST-PAYLOAD";
+    //url += "&keywords=usc%20tickets%202017";
+	url += searchTextModified;
+    url += "&paginationInput.entriesPerPage=3";
+    url += urlfilter;
+
+
+	// Submit the request 
+	s=document.createElement('script'); // create script element
+	s.src= url;
+	document.body.appendChild(s);
+
+	// Display the request as a clickable link for testing
+	//document.write("<a href=\"" + url + "\">" + url + "</a>");
+	var HttpClient = function() {
+				this.get = function(aUrl, aCallback) {
+					var anHttpRequest = new XMLHttpRequest();
+					anHttpRequest.onreadystatechange = function() { 
+						if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
+							aCallback(anHttpRequest.responseText);
+					}
+
+					anHttpRequest.open( "GET", aUrl, true );            
+					anHttpRequest.send( null );
+				}
+			}
+
+			var clienteBay = new HttpClient();
+			clienteBay.get(url, function(responseEBay) {
+				//console.log(response);
+				//console.log(response.replace('/**/_cb_findItemsByKeywords',''))
+				//responseEBay = responseEBay.replace(")", "");
+				responseEBay = responseEBay.slice(0, -1);
+				responseEBay = responseEBay.replace("'", "\'");
+				responseEBay = responseEBay.replace("(", "");
+				responseEBay = responseEBay.replace('/**/_cb_findItemsByKeywords','');
+				var jsonObject = JSON.parse(responseEBay);
+				//var jsonObject = JSON.stringify(eval(response.replace('/**/_cb_findItemsByKeywords','')));
+				//console.log(responseEBay)
+				console.log("json")
+				//console.log(firebase.auth().currentUser.email)
+				//console.log(jsonObject)
+				var i
+				for (i = 0; i < 3; i++) {
+					//console.log(jsonObject.findItemsByKeywordsResponse.searchResult);
+					itemName.push((jsonObject['findItemsByKeywordsResponse'][0]['searchResult'][0]['item'][i]['title']).toString());
+					imageURL.push((jsonObject['findItemsByKeywordsResponse'][0]['searchResult'][0]['item'][i]['galleryURL']).toString());
+					itemURL.push((jsonObject['findItemsByKeywordsResponse'][0]['searchResult'][0]['item'][i]['viewItemURL']).toString());
+					if ((jsonObject['findItemsByKeywordsResponse'][0]['searchResult'][0]['item'][i]['location']).toString() === "USA"){
+						itemLocation.push("Los Angeles,CA,USA")
+					}
+					else{
+						itemLocation.push((jsonObject['findItemsByKeywordsResponse'][0]['searchResult'][0]['item'][i]['location']).toString());
+					}
+					if (typeof(jsonObject['findItemsByKeywordsResponse'][0]['searchResult'][0]['item'][i]['postalCode']) === "undefined") {
+						postalCode[i] = "90007"
+					}
+					else{
+						postalCode.push((jsonObject['findItemsByKeywordsResponse'][0]['searchResult'][0]['item'][i]['postalCode']).toString());
+					}
+					
+					price.push((jsonObject['findItemsByKeywordsResponse'][0]['searchResult'][0]['item'][i]['sellingStatus'][0]['currentPrice'][0]['__value__']).toString());
+				}
+				itemLocation.push("4651 Firestone Blvd,South Gate,CA,USA")
+				itemLocation.push("8333 Van Nuys Blvd,Panorama City,CA,USA")
+				itemLocation.push("13463 Washington Blvd,Marina Del Rey,CA,USA")
+				for (k = 0; k < 3; k++) {
+						price.push((parseInt(price[k]) + 1).toString())
+						
+						postalCode.push("90007");
+						//console.log(imageURL);
+						//console.log(itemName);
+						//console.log(price);
+					}
+				//console.log(itemLocation)
+				//neighborhoods = []
+				
+				drop()
+				//console.log(price)
+				//firebase.database().ref("BestDeal/").set(jsonObject)
+			});
+
+			<!--Below script is for Supermarket -->
+			var urlSuper = "http://www.supermarketapi.com/api.asmx/SearchByProductName?APIKEY=706d212a28&";
+				urlSuper += "ItemName=";
+				urlSuper += searchText.split(' ').join('%20');
+				
+
+				var clientSuper = new HttpClient();
+				clientSuper.get(urlSuper, function(responseSuper) {
+					//console.log(typeof(response));
+					//console.log(response.replace('<?xml version="1.0" encoding="utf-8"?>',''))
+					 //let jsonObject = JSON.parse(response)
+					 //console.log(typeof(jsonObject))
+					parser = new DOMParser();
+					xmlDoc = parser.parseFromString(responseSuper, "text/xml");
+					//console.log(xmlDoc);
+					console.log("xml")
+					var j
+					for (j = 2; j < 5; j++) {
+						itemName.push((xmlDoc.getElementsByTagName('Itemname')[j].childNodes[0].nodeValue).toString());
+						imageURL.push((xmlDoc.getElementsByTagName('ItemImage')[j].childNodes[0].nodeValue).toString());
+						if (j===4){
+						}
+					}
+					
+					
+					//console.log(xmlDoc.getElementsByTagName('Itemname')[1].childNodes[0].nodeValue);
+				});
+}
+
+
+// Construct the request
+// Replace MyAppID with your Production AppID
+
+</script>
+	<script>
+		function btnSignOut(){
+			var text = "signOut"
+			window.location.href = "LoginPageFinal.html"+ '#' + text;
+			//window.location.href = '<path to profile.html>' + '#' + text;
+		}
+	</script>
+			<!--Script for SuperMarket API-->
+		<script>
+			var HttpClient = function() {
+				this.get = function(aUrl, aCallback) {
+					var anHttpRequest = new XMLHttpRequest();
+					anHttpRequest.onreadystatechange = function() { 
+						if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
+							aCallback(anHttpRequest.responseText);
+					}
+
+					anHttpRequest.open( "GET", aUrl, true );            
+					anHttpRequest.send( null );
+				}
+			}
+
+		</script>
+		<script src="https://www.gstatic.com/firebasejs/4.3.1/firebase.js"></script>
+		<script>
+		  // Initialize Firebase
+			var config = {
+				apiKey: "AIzaSyDe8oUuh77IR7dN5uKlN96FHwAcmShMrz8",
+				authDomain: "inf551-2873c.firebaseapp.com",
+				databaseURL: "https://inf551-2873c.firebaseio.com",
+				projectId: "inf551-2873c",
+				storageBucket: "inf551-2873c.appspot.com",
+				messagingSenderId: "994438847565"
+			};
+			firebase.initializeApp(config);
+		</script>
+
+		<script>
+			function myFunction() {
+				var table = document.getElementById("resultTable");
+				
+				//table.innerHTML = "";
+				
+				var row1 = table.insertRow(0);
+				var cell11 = row1.insertCell(0);
+				var cell12 = row1.insertCell(1);
+				var cell13 = row1.insertCell(2);
+				//cell11.innerHTML = imageURL[0];
+				//cell12.innerHTML = itemName[0];
+				cell13.innerHTML = "$".concat(price[0]);
+				
+				var img1 = document.createElement('img');
+				img1.src = imageURL[0];
+				cell11.appendChild(img1);
+				
+				var a1 = document.createElement('a');
+				var linkText1 = document.createTextNode(itemName[0]);
+				a1.appendChild(linkText1);
+				a1.title = itemName[0];
+				a1.href = itemURL[0];
+				cell12.append(a1);
+				
+				
+				var row2 = table.insertRow(1);
+				var cell21 = row2.insertCell(0);
+				var cell22 = row2.insertCell(1);
+				var cell23 = row2.insertCell(2);
+				//cell21.innerHTML = imageURL[1];
+				//cell22.innerHTML = itemName[1];
+				cell23.innerHTML = "$".concat(price[1]);
+				
+				var img2 = document.createElement('img');
+				img2.src = imageURL[1];
+				cell21.appendChild(img2);
+				
+				var a2 = document.createElement('a');
+				var linkText2 = document.createTextNode(itemName[1]);
+				a2.appendChild(linkText2);
+				a2.title = itemName[1];
+				a2.href = itemURL[1];
+				cell22.append(a2);
+				
+				var row3 = table.insertRow(2);
+				var cell31 = row3.insertCell(0);
+				var cell32 = row3.insertCell(1);
+				var cell33 = row3.insertCell(2);
+				//cell31.innerHTML = imageURL[2];
+				//cell32.innerHTML = itemName[2];
+				cell33.innerHTML = "$".concat(price[2]);
+				
+				var img3 = document.createElement('img');
+				img3.src = imageURL[2];
+				cell31.appendChild(img3);
+				
+				var a3 = document.createElement('a');
+				var linkText3 = document.createTextNode(itemName[2]);
+				a3.appendChild(linkText3);
+				a3.title = itemName[2];
+				a3.href = itemURL[2];
+				cell32.append(a3);
+				
+				var row4 = table.insertRow(3);
+				var cell41 = row4.insertCell(0);
+				var cell42 = row4.insertCell(1);
+				var cell43 = row4.insertCell(2);
+				//cell41.innerHTML = imageURL[3];
+				///cell42.innerHTML = itemName[3];
+				cell43.innerHTML = "$".concat(price[3]);
+				
+				var img4 = document.createElement('img');
+				img4.src = imageURL[3];
+				cell41.appendChild(img4);
+				
+				var a4 = document.createElement('a');
+				var linkText4 = document.createTextNode(itemName[3]);
+				a4.appendChild(linkText4);
+				a4.title = itemName[3];
+				a4.href = "http://www.supermarketapi.com/";
+				cell42.append(a4);
+				
+				var row5 = table.insertRow(4);
+				var cell51 = row5.insertCell(0);
+				var cell52 = row5.insertCell(1);
+				var cell53 = row5.insertCell(2);
+				//cell51.innerHTML = imageURL[4];
+				//cell52.innerHTML = itemName[4];
+				cell53.innerHTML = "$".concat(price[4]);
+				
+				var img5 = document.createElement('img');
+				img5.src = imageURL[4];
+				cell51.appendChild(img5);
+				
+				var a5 = document.createElement('a');
+				var linkText5 = document.createTextNode(itemName[4]);
+				a5.appendChild(linkText5);
+				a5.title = itemName[4];
+				a5.href = "http://www.supermarketapi.com/";
+				cell52.append(a5);
+				
+				
+				var row6 = table.insertRow(5);
+				var cell61 = row6.insertCell(0);
+				var cell62 = row6.insertCell(1);
+				var cell63 = row6.insertCell(2);
+				//cell61.innerHTML = imageURL[5];
+				//cell62.innerHTML = itemName[5];
+				cell63.innerHTML = "$".concat(price[5]);
+				
+				var img6 = document.createElement('img');
+				img6.src = imageURL[5];
+				cell61.appendChild(img6);
+				
+				var a6 = document.createElement('a');
+				var linkText6 = document.createTextNode(itemName[5]);
+				a6.appendChild(linkText6);
+				a6.title = itemName[5];
+				a6.href = "http://www.supermarketapi.com/";
+				cell62.append(a6);
+				SaveSearchDetails();
+				
+			}
+		
+		</script>
+	
+		<script>
+			function SaveSearchDetails(){
+			var searchText = document.getElementById("inputSearchText").value;	
+			console.log("BestDeal"+"/"+(firebase.auth().currentUser.email).toString().split('@')[0]+"/"+ searchText.toString()+"/"+ "0")
+			//var BestDeal = firebase.database().ref('BestDeal');
+			//var userName = BestDeal.child(firebase.auth().currentUser.email)
+			//var searchString = userName.child(searchText.toString())
+			var l
+			for (l = 0 ; l < 6; l++){
+			
+				firebase.database().ref("BestDeal"+"/"+(firebase.auth().currentUser.email).toString().split('@')[0]+"/"+ searchText.toString()+"/"+ l.toString()).set({
+					itemName : itemName[l],
+					imageURL  : imageURL[l],
+					itemURL : itemURL[l],
+					itemLocation :itemLocation[l],
+					price : price[l]
+				});
+			}
+			}
+		</script>
+
+  </body>
+</html>

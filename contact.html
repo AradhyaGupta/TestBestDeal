@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CONTACT</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/GoogleMap.css">
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<style>
+input[type=text], select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-top: 6px;
+    margin-bottom: 16px;
+    resize: vertical;
+}
+
+input[type=submit] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type=submit]:hover {
+    background-color: #45a049;
+}
+
+.container {
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 20px;
+}
+</style>
+</head>
+<body>
+    <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a href="#" class="navbar-brand" style = "color:cornsilk;">BestDeal.com</a>
+                </div>
+                <!-- Menu Items -->
+                <div>
+                    <ul class="nav navbar-nav">
+                        <li><a href="testGoogleMap.html" style ="color:khaki;">Home</a></li>
+                        <li><a href="about.html" style ="color:khaki;">About</a></li>
+                        <li class="active"><a href="contact.html">Contact</a></li>
+                        <li  onclick = "btnSignOut()"><a href="#" style ="color:khaki;">Log Out</a></li>
+                    </ul>
+                </div>
+
+            </div>
+        </nav>
+
+<h3>Contact Form</h3>
+
+<div class="container">
+  <form action="mailto:abhinavj2031@gmail.com" method="post" enctype="text/plain">
+    <label for="fname">First Name</label>
+    <input type="text" id="fname" name="firstname" placeholder="Your name..">
+
+    <label for="lname">Last Name</label>
+    <input type="text" id="lname" name="lastname" placeholder="Your last name..">
+
+    <label for="country">Country</label>
+    <select id="country" name="country">
+      <option value="australia">Australia</option>
+      <option value="canada">Canada</option>
+      <option value="usa">USA</option>
+    </select>
+
+    <label for="subject">Subject</label>
+    <textarea id="subject" name="subject" placeholder="Write something.." style="height:200px"></textarea>
+
+   <input type="submit" value="Send">
+   <input type="reset" value="Reset">
+   
+  </form>
+</div>
+	<script>
+		function btnSignOut(){
+			var text = "signOut"
+			window.location.href = "LoginPageFinal.html"+ '#' + text;
+			//window.location.href = '<path to profile.html>' + '#' + text;
+		}
+	</script>
+</body>
+</html>
